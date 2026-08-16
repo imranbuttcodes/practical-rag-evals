@@ -38,10 +38,7 @@ if not DEEPSEEK_API_KEY:
     )
 
 
-# ============================================================
 # PATHS
-# ============================================================
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 GOLDEN_DATASET = (
@@ -114,12 +111,6 @@ for item in dataset["questions"]:
 
     expected_output = item["expected_output"]
 
-
-    # --------------------------------------------------------
-    # IMPORTANT:
-    # This is YOUR actual retriever.
-    # We are not creating another retriever here.
-    # --------------------------------------------------------
 
     retrieved_docs = retrieve(
         question,

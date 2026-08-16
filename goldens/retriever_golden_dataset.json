@@ -1,0 +1,467 @@
+{
+  "dataset_name": "retriever_golden_dataset",
+  "version": "1.0",
+  "purpose": "Content-based and reference-based RAG retriever evaluation.",
+  "corpus": "Nexora_Company_Policy_Manual.pdf",
+  "notes": [
+    "expected_output is stable semantic ground truth for LLM-as-a-Judge metrics.",
+    "relevant_sections support deterministic section-level retrieval analysis.",
+    "Chunk IDs are deliberately not the primary golden labels because chunking can change them.",
+    "The golden dataset is independent of chunk_size, chunk_overlap, and chunking strategy.",
+    "expected_output is intended for DeepEval contextual recall and contextual precision evaluation.",
+    "This dataset must remain outside the production RAG knowledge base."
+  ],
+  "questions": [
+    {
+      "id": "Q01",
+      "question": "How many hours per week must a full-time employee be regularly scheduled to work?",
+      "expected_output": "A full-time employee is regularly scheduled to work at least 35 hours per week.",
+      "relevant_sections": [
+        "2.2 Employment Classifications"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q02",
+      "question": "How many hours per week is a part-time employee regularly scheduled to work?",
+      "expected_output": "A part-time employee is regularly scheduled to work fewer than 35 hours per week.",
+      "relevant_sections": [
+        "2.2 Employment Classifications"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q03",
+      "question": "How long can a temporary employee typically be hired for?",
+      "expected_output": "A temporary employee is hired for a specific project or defined period, typically not exceeding 12 months.",
+      "relevant_sections": [
+        "2.2 Employment Classifications"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q04",
+      "question": "Are independent contractors subject to the Nexora Employee Handbook?",
+      "expected_output": "Independent contractors are engaged under a separate contractor agreement and are not subject to the Handbook except where a policy explicitly states that it applies to them.",
+      "relevant_sections": [
+        "2.2 Employment Classifications"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q05",
+      "question": "How long is the introductory period for new full-time and part-time employees?",
+      "expected_output": "New full-time and part-time employees have a 90-calendar-day introductory period beginning on their start date.",
+      "relevant_sections": [
+        "2.3 Introductory Period"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q06",
+      "question": "Can relatives work in the same direct reporting line at Nexora?",
+      "expected_output": "Relatives may be hired as long as they do not directly supervise or be supervised by a relative and do not work within the same direct reporting line. Exceptions require written approval from the Chief People Officer.",
+      "relevant_sections": [
+        "2.4 Employment of Relatives"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q07",
+      "question": "What is required before an employment offer becomes final?",
+      "expected_output": "Offers of employment are contingent upon successful completion of a background check, which may include employment history, education, criminal record checks where legally permitted, and reference checks.",
+      "relevant_sections": [
+        "2.5 Background Checks and Verification"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q08",
+      "question": "What are Nexora's standard business hours?",
+      "expected_output": "Standard business hours are Monday through Friday, 9:00 AM to 6:00 PM local time, with a one-hour unpaid lunch break. Department-specific schedules may vary.",
+      "relevant_sections": [
+        "4.1 Working Hours and Attendance"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q09",
+      "question": "How many PTO days does a full-time employee with 0–2 years of service receive?",
+      "expected_output": "A full-time employee with 0–2 years of service receives 15 annual PTO days, accruing at 1.25 days per month.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q10",
+      "question": "How many PTO days does an employee with 3–5 years of service receive?",
+      "expected_output": "An employee with 3–5 years of service receives 20 annual PTO days, accruing at 1.67 days per month.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q11",
+      "question": "How many PTO days does an employee with 6–9 years of service receive?",
+      "expected_output": "An employee with 6–9 years of service receives 23 annual PTO days, accruing at 1.92 days per month.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q12",
+      "question": "How many PTO days does an employee with 10 or more years of service receive?",
+      "expected_output": "An employee with 10 or more years of service receives 25 annual PTO days, accruing at 2.08 days per month.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q13",
+      "question": "How many unused PTO days can be carried over into the following calendar year?",
+      "expected_output": "Unused PTO may be carried over up to a maximum of 5 days into the following calendar year.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q14",
+      "question": "How far in advance should employees normally submit PTO requests?",
+      "expected_output": "PTO requests should be submitted at least two weeks in advance through the HR portal and are subject to manager approval based on business needs.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q15",
+      "question": "How many paid sick days do employees receive per calendar year?",
+      "expected_output": "Employees receive 8 paid sick days per calendar year for personal illness, medical appointments, or care of an immediate family member.",
+      "relevant_sections": [
+        "4.3 Sick Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q16",
+      "question": "When may a doctor's note be required for sick leave?",
+      "expected_output": "A doctor's note may be required for absences exceeding 3 consecutive days.",
+      "relevant_sections": [
+        "4.3 Sick Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q17",
+      "question": "What paid holidays does Nexora observe?",
+      "expected_output": "Nexora observes New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving Day, the day after Thanksgiving, and Christmas Day as paid holidays. Employees in other countries observe the statutory holiday schedule applicable to their location.",
+      "relevant_sections": [
+        "4.4 Holidays"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q18",
+      "question": "How many weeks of paid parental leave are eligible employees entitled to?",
+      "expected_output": "Eligible employees are entitled to 16 weeks of paid parental leave following the birth, adoption, or foster placement of a child.",
+      "relevant_sections": [
+        "4.5 Parental and Family Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q19",
+      "question": "Can parental leave be taken intermittently?",
+      "expected_output": "Yes. Parental leave may be taken continuously or intermittently within 12 months of the qualifying event, subject to manager coordination.",
+      "relevant_sections": [
+        "4.5 Parental and Family Leave"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q20",
+      "question": "How much bereavement leave is available for the death of an immediate family member?",
+      "expected_output": "Employees may take up to 5 paid days of bereavement leave for the death of an immediate family member.",
+      "relevant_sections": [
+        "4.6 Bereavement Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q21",
+      "question": "How much paid leave is available for jury duty?",
+      "expected_output": "Nexora provides paid leave for jury duty.",
+      "relevant_sections": [
+        "4.7 Jury Duty and Voting Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q22",
+      "question": "How much paid voting leave can an employee receive?",
+      "expected_output": "Employees may receive up to 4 hours of paid leave to vote in public elections when their work schedule does not otherwise allow sufficient time to vote.",
+      "relevant_sections": [
+        "4.7 Jury Duty and Voting Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q23",
+      "question": "How often are Nexora employees paid?",
+      "expected_output": "Employees are paid bi-weekly. Pay periods end every other Friday and payment is issued the following Friday via direct deposit.",
+      "relevant_sections": [
+        "5.1 Pay Schedule"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q24",
+      "question": "How much overtime pay do non-exempt employees receive for hours beyond 40 in a workweek?",
+      "expected_output": "Non-exempt employees are compensated at 1.5 times their regular hourly rate for hours worked beyond 40 in a workweek, subject to applicable law.",
+      "relevant_sections": [
+        "5.2 Overtime"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q25",
+      "question": "Does overtime require manager approval?",
+      "expected_output": "Yes. Overtime must be pre-approved by a manager.",
+      "relevant_sections": [
+        "5.2 Overtime"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q26",
+      "question": "When are formal performance reviews conducted?",
+      "expected_output": "Formal performance reviews are conducted annually each Q1, with optional mid-year check-ins in Q3.",
+      "relevant_sections": [
+        "5.3 Performance Reviews and Merit Increases"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q27",
+      "question": "What is Nexora's 401(k) company match and vesting period?",
+      "expected_output": "Nexora provides a 4% Company 401(k) match, fully vested after 2 years of service.",
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q28",
+      "question": "What percentage of employee health insurance premiums does Nexora cover?",
+      "expected_output": "Nexora covers 80% of employee medical, dental, and vision insurance premiums and 60% of dependent premiums.",
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q29",
+      "question": "How much is Nexora's annual wellness stipend?",
+      "expected_output": "Nexora provides an annual wellness stipend of $500 for gym memberships, fitness equipment, or wellness apps.",
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q30",
+      "question": "What are the requirements for expense reimbursement?",
+      "expected_output": "Reasonable, pre-approved business expenses must be submitted through the expense management system within 30 days of the expense being incurred and must include itemized receipts.",
+      "relevant_sections": [
+        "5.5 Expense Reimbursement"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q31",
+      "question": "How many days per week may an eligible employee work remotely?",
+      "expected_output": "Eligible employees may work remotely up to 3 days per week, subject to manager approval and role requirements.",
+      "relevant_sections": [
+        "6.2 Remote and Hybrid Work Policy"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q32",
+      "question": "During what hours must remote employees remain reachable?",
+      "expected_output": "Remote employees must remain reachable during core business hours from 10:00 AM to 4:00 PM local time.",
+      "relevant_sections": [
+        "6.2 Remote and Hybrid Work Policy"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q33",
+      "question": "What is Nexora's dress code?",
+      "expected_output": "Nexora maintains a business-casual dress code for office-based roles. Client-facing employees should dress professionally on days involving client meetings, while casual attire including jeans is permitted on Fridays.",
+      "relevant_sections": [
+        "6.3 Dress Code"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q34",
+      "question": "What are the password requirements for Nexora systems?",
+      "expected_output": "Passwords must be at least 12 characters and include a mix of letters, numbers, and symbols. Passwords must never be shared, written down, or reused across personal and Company accounts.",
+      "relevant_sections": [
+        "7.2 Password and Account Security"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q35",
+      "question": "Is multi-factor authentication required for Nexora systems?",
+      "expected_output": "Yes. Multi-factor authentication is required for all Company systems, including email and VPN access.",
+      "relevant_sections": [
+        "7.2 Password and Account Security"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q36",
+      "question": "What are Nexora's four data classification tiers?",
+      "expected_output": "Nexora classifies Company data into four tiers: Public, Internal, Confidential, and Restricted.",
+      "relevant_sections": [
+        "7.3 Data Classification and Handling"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q37",
+      "question": "What security requirements apply to confidential and restricted data?",
+      "expected_output": "Confidential and Restricted data, including client PII, financial records, and source code, must be encrypted at rest and in transit and may only be accessed by authorized personnel on a need-to-know basis.",
+      "relevant_sections": [
+        "7.3 Data Classification and Handling"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q38",
+      "question": "What security requirements apply to personal devices used to access Nexora systems?",
+      "expected_output": "Personal devices used to access Company email or systems must be enrolled in the Company's mobile device management platform and comply with minimum security requirements, including passcode protection and remote wipe capability.",
+      "relevant_sections": [
+        "7.4 Bring Your Own Device (BYOD)"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q39",
+      "question": "What should an employee do after receiving a suspected phishing email?",
+      "expected_output": "Suspected security incidents, including phishing emails, must be reported immediately to the IT Security team at security@nexorasolutions.example or through the internal incident reporting tool.",
+      "relevant_sections": [
+        "7.5 Incident Reporting"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q40",
+      "question": "What information must employees not disclose on social media?",
+      "expected_output": "Employees must not disclose confidential Company information on social media. Only designated spokespeople may speak on behalf of the Company to media outlets.",
+      "relevant_sections": [
+        "7.6 Social Media and Public Communications"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q41",
+      "question": "How long does a typical Performance Improvement Plan last?",
+      "expected_output": "A Performance Improvement Plan typically has a defined timeline of 30–90 days for improvement, with specific measurable goals developed collaboratively with the employee's manager and the People & Culture Department.",
+      "relevant_sections": [
+        "8.1 Performance Improvement Plans (PIP)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q42",
+      "question": "What are the normal stages of Nexora's progressive discipline process?",
+      "expected_output": "Nexora generally follows a progressive discipline process consisting of a verbal warning and documented coaching conversation, a written warning, a final written warning and/or suspension where applicable, and termination of employment. The Company may bypass steps depending on the severity of the conduct.",
+      "relevant_sections": [
+        "8.2 Progressive Discipline"
+      ],
+      "difficulty": "hard"
+    },
+    {
+      "id": "Q43",
+      "question": "What violations may result in immediate termination?",
+      "expected_output": "Certain violations, including theft, workplace violence, harassment, falsification of records, or gross misconduct, may result in immediate termination without progressing through the standard disciplinary steps.",
+      "relevant_sections": [
+        "8.3 Grounds for Immediate Termination"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q44",
+      "question": "How much notice are employees asked to provide when resigning?",
+      "expected_output": "Employees are asked to provide a minimum of two weeks' written notice of resignation.",
+      "relevant_sections": [
+        "8.4 Voluntary Resignation"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q45",
+      "question": "How must business travel be booked and approved?",
+      "expected_output": "All business travel must be booked through the Company's approved travel portal and pre-approved by the employee's manager.",
+      "relevant_sections": [
+        "9.1 Booking and Approval"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q46",
+      "question": "What is Nexora's daily meal allowance for domestic and international business travel?",
+      "expected_output": "Employees traveling on Company business receive a daily meal allowance of $75 USD domestically and $100 USD internationally, in lieu of itemized meal receipts.",
+      "relevant_sections": [
+        "9.2 Per Diem and Meal Allowances"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "Q47",
+      "question": "What must employees do when traveling to regions with elevated risk advisories?",
+      "expected_output": "Employees traveling to regions with elevated risk advisories must register their itinerary with the Security team and follow all guidance issued prior to and during travel.",
+      "relevant_sections": [
+        "9.3 Travel Safety"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q48",
+      "question": "Who should an employee report a policy violation to?",
+      "expected_output": "Employees should report policy violations to their manager, the People & Culture Department, or through the confidential Ethics Hotline at ethics@nexorasolutions.example or 1-800-555-0142. Nexora prohibits retaliation against employees who report concerns in good faith.",
+      "relevant_sections": [
+        "3.6 Reporting Violations and Whistleblower Protection"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q49",
+      "question": "What kinds of gifts from vendors or clients are identified as a conflict of interest?",
+      "expected_output": "Accepting gifts or hospitality from vendors or clients valued above $100 USD is identified as a conflict-of-interest situation and must be avoided or disclosed according to the policy.",
+      "relevant_sections": [
+        "3.2 Conflicts of Interest"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "Q50",
+      "question": "Who should an employee contact about a security incident?",
+      "expected_output": "Security incidents should be reported to the IT Security team at security@nexorasolutions.example or through the internal incident reporting tool. The Key Contacts section lists IT Security at 1-800-555-0199.",
+      "relevant_sections": [
+        "7.5 Incident Reporting",
+        "11. Key Contacts"
+      ],
+      "difficulty": "easy"
+    }
+  ]
+}

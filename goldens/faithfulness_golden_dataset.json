@@ -1,0 +1,232 @@
+{
+  "dataset_name": "faithfulness_golden_dataset",
+  "version": "1.1",
+  "purpose": "Isolated generator evaluation for faithfulness and answer relevancy using ideal context.",
+  "corpus": "Nexora_Company_Policy_Manual.pdf",
+  "notes": [
+    "ideal_context contains pre-selected ground-truth document snippets to isolate generator testing from retriever performance.",
+    "expected_output represents the ideal grounded response.",
+    "Faithfulness evaluation checks whether generated actual_output is completely supported by ideal_context.",
+    "This dataset is used by evals/generator_eval.py with generate_from_context()."
+  ],
+  "questions": [
+    {
+      "id": "F01",
+      "question": "What are the working hours and attendance expectations for full-time employees?",
+      "expected_output": "Full-time employees are regularly scheduled to work at least 35 hours per week. Standard business hours are Monday through Friday, 9:00 AM to 6:00 PM local time, with a one-hour unpaid lunch break.",
+      "ideal_context": [
+        "2.2 Employment Classifications\n• Full-Time Employee: Regularly scheduled to work at least 35 hours per week.\n• Part-Time Employee: Regularly scheduled to work fewer than 35 hours per week.",
+        "4.1 Working Hours and Attendance\nStandard business hours are Monday through Friday, 9:00 AM to 6:00 PM local time, with a one-hour unpaid lunch break. Department-specific schedules may vary."
+      ],
+      "relevant_sections": [
+        "2.2 Employment Classifications",
+        "4.1 Working Hours and Attendance"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F02",
+      "question": "How long is the introductory period for new employees and how is performance evaluated?",
+      "expected_output": "New full-time and part-time employees serve a 90-calendar-day introductory period starting on their start date. Performance and fit are evaluated by the employee's manager during this period.",
+      "ideal_context": [
+        "2.3 Introductory Period\nAll new full-time and part-time employees serve a ninety (90) calendar day introductory period beginning on their start date. During this period, performance and fit are evaluated by the employee's manager."
+      ],
+      "relevant_sections": [
+        "2.3 Introductory Period"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F03",
+      "question": "What are the rules regarding gifts or hospitality from vendors or clients under the Conflict of Interest policy?",
+      "expected_output": "Employees must avoid conflicts of interest and are prohibited from accepting gifts or hospitality from vendors or clients valued above $100 USD.",
+      "ideal_context": [
+        "3.2 Conflicts of Interest\nEmployees must avoid situations in which personal interests conflict with Company interests.\n1. Outside employment competing with Company duties.\n2. Financial interests in a competitor.\n3. Accepting gifts or hospitality from vendors or clients valued above $100 USD."
+      ],
+      "relevant_sections": [
+        "3.2 Conflicts of Interest"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F04",
+      "question": "How many annual PTO days do employees accrue based on their years of service?",
+      "expected_output": "Full-time employees accrue PTO based on service: 0–2 years get 15 days (1.25 days/month), 3–5 years get 20 days (1.67 days/month), 6–9 years get 23 days (1.92 days/month), and 10+ years get 25 days (2.08 days/month).",
+      "ideal_context": [
+        "4.2 Paid Time Off (PTO)\nFull-time employees accrue Paid Time Off according to the following schedule:\nYears of Service | Annual PTO Days | Accrual Rate / Month\n0–2 years | 15 days | 1.25 days\n3–5 years | 20 days | 1.67 days\n6–9 years | 23 days | 1.92 days\n10+ years | 25 days | 2.08 days"
+      ],
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F05",
+      "question": "How many days of unused PTO can be carried over into the following calendar year?",
+      "expected_output": "Unused PTO may be carried over up to a maximum of 5 days into the following calendar year.",
+      "ideal_context": [
+        "Unused PTO may be carried over up to a maximum of 5 days into the following calendar year. PTO requests should be submitted at least two weeks in advance."
+      ],
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F06",
+      "question": "What is the policy for paid parental leave following the birth or placement of a child?",
+      "expected_output": "Eligible employees receive 16 weeks of paid parental leave following the birth, adoption, or foster placement of a child, which can be taken continuously or intermittently within 12 months.",
+      "ideal_context": [
+        "4.5 Parental and Family Leave\nEligible employees are entitled to 16 weeks of paid parental leave following the birth, adoption, or foster placement of a child. Leave may be taken continuously or intermittently within 12 months."
+      ],
+      "relevant_sections": [
+        "4.5 Parental and Family Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F07",
+      "question": "How many paid bereavement days are provided for immediate vs. extended family members?",
+      "expected_output": "Employees receive up to 5 paid days of bereavement leave for an immediate family member, and up to 2 paid days for an extended family member or close friend.",
+      "ideal_context": [
+        "4.6 Bereavement Leave\nEmployees may take up to 5 paid days of bereavement leave for the death of an immediate family member, and up to 2 paid days for the death of a extended family member or close friend."
+      ],
+      "relevant_sections": [
+        "4.6 Bereavement Leave"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F08",
+      "question": "What percentage of health insurance premiums does Nexora cover for employees and dependents?",
+      "expected_output": "Nexora covers 80% of employee medical, dental, and vision insurance premiums, and 60% of dependent premiums.",
+      "ideal_context": [
+        "5.4 Health and Welfare Benefits\n• Medical, dental, and vision insurance, with the Company covering 80% of employee premiums and 60% of dependent premiums."
+      ],
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F09",
+      "question": "What are the 401(k) matching and vesting terms at Nexora?",
+      "expected_output": "Nexora provides a 401(k) retirement plan with a 4% Company match, which becomes fully vested after 2 years of service.",
+      "ideal_context": [
+        "• 401(k) retirement plan with a 4% Company match, fully vested after 2 years of service."
+      ],
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F10",
+      "question": "What is the annual wellness stipend amount and what can it be used for?",
+      "expected_output": "Employees receive an annual wellness stipend of $500 for gym memberships, fitness equipment, or wellness apps.",
+      "ideal_context": [
+        "• Annual wellness stipend of $500 for gym memberships, fitness equipment, or wellness apps."
+      ],
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F11",
+      "question": "What is the remote work policy and core working hours requirement?",
+      "expected_output": "Eligible employees may work remotely up to 3 days per week with manager approval and must remain reachable during core business hours from 10:00 AM to 4:00 PM local time.",
+      "ideal_context": [
+        "6.2 Remote and Hybrid Work Policy\nEligible employees may work remotely up to 3 days per week, subject to manager approval and role requirements. Remote employees must maintain a secure workspace and remain reachable during core business hours (10:00 AM–4:00 PM local time)."
+      ],
+      "relevant_sections": [
+        "6.2 Remote and Hybrid Work Policy"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F12",
+      "question": "What are the password security requirements for company accounts?",
+      "expected_output": "Passwords must be at least 12 characters and include a mix of letters, numbers, and symbols. Multi-factor authentication (MFA) is required for all systems.",
+      "ideal_context": [
+        "7.2 Password and Account Security\n• Passwords must be at least 12 characters and include a mix of letters, numbers, and symbols.\n• Multi-factor authentication (MFA) is required for all Company systems, including email and VPN access."
+      ],
+      "relevant_sections": [
+        "7.2 Password and Account Security"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F13",
+      "question": "What are the requirements for using personal devices under the BYOD policy?",
+      "expected_output": "Personal devices used to access Company systems must be enrolled in the mobile device management (MDM) platform and comply with security requirements including passcode protection and remote wipe capability.",
+      "ideal_context": [
+        "7.4 Bring Your Own Device (BYOD)\nPersonal devices used to access Company email or systems must be enrolled in the Company's mobile device management (MDM) platform and comply with minimum security requirements, including passcode protection and remote wipe capability."
+      ],
+      "relevant_sections": [
+        "7.4 Bring Your Own Device (BYOD)"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F14",
+      "question": "What timeline and process are involved in a Performance Improvement Plan (PIP)?",
+      "expected_output": "A PIP outlines specific measurable goals over a defined timeline of typically 30 to 90 days, developed collaboratively with the manager and People & Culture.",
+      "ideal_context": [
+        "8.1 Performance Improvement Plans (PIP)\nEmployees whose performance falls below expectations may be placed on a Performance Improvement Plan outlining specific, measurable goals and a defined timeline (typically 30–90 days) for improvement."
+      ],
+      "relevant_sections": [
+        "8.1 Performance Improvement Plans (PIP)"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F15",
+      "question": "What are the four steps of progressive discipline at Nexora?",
+      "expected_output": "The four steps are: 1) Verbal warning and documented coaching, 2) Written warning, 3) Final written warning and/or suspension, and 4) Termination of employment.",
+      "ideal_context": [
+        "8.2 Progressive Discipline\n5. Verbal warning and documented coaching conversation.\n6. Written warning placed in the employee's personnel file.\n7. Final written warning and/or suspension, where applicable.\n8. Termination of employment."
+      ],
+      "relevant_sections": [
+        "8.2 Progressive Discipline"
+      ],
+      "difficulty": "medium"
+    },
+    {
+      "id": "F16",
+      "question": "How much written notice is an employee requested to provide upon voluntary resignation?",
+      "expected_output": "Employees are asked to provide a minimum of two weeks' written notice of resignation.",
+      "ideal_context": [
+        "8.4 Voluntary Resignation\nEmployees are asked to provide a minimum of two weeks' written notice of resignation."
+      ],
+      "relevant_sections": [
+        "8.4 Voluntary Resignation"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F17",
+      "question": "What are the daily meal allowances (per diem) for domestic vs. international business travel?",
+      "expected_output": "Employees receive a daily meal allowance of $75 USD for domestic travel and $100 USD for international travel in lieu of meal receipts.",
+      "ideal_context": [
+        "9.2 Per Diem and Meal Allowances\nEmployees traveling on Company business receive a daily meal allowance of $75 USD domestically and $100 USD internationally, in lieu of itemized meal receipts."
+      ],
+      "relevant_sections": [
+        "9.2 Per Diem and Meal Allowances"
+      ],
+      "difficulty": "easy"
+    },
+    {
+      "id": "F18",
+      "question": "What are the contact details for the People & Culture Department and the confidential Ethics Hotline?",
+      "expected_output": "People & Culture Department: hr@nexorasolutions.example | 1-800-555-0110. Ethics Hotline: ethics@nexorasolutions.example | 1-800-555-0142.",
+      "ideal_context": [
+        "11. Key Contacts\nPeople & Culture Department: hr@nexorasolutions.example | 1-800-555-0110\nEthics Hotline (Confidential): ethics@nexorasolutions.example | 1-800-555-0142"
+      ],
+      "relevant_sections": [
+        "11. Key Contacts"
+      ],
+      "difficulty": "easy"
+    }
+  ]
+}

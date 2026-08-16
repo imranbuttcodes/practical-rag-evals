@@ -2,6 +2,7 @@ langchain-community
 langchain-chroma
 langchain-google-genai
 langchain-deepseek
+langchain-groq
 deepeval
 python-dotenv
 pypdf
