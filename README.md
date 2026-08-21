@@ -9,14 +9,6 @@ A practical framework for evaluating, benchmarking, and optimizing Retrieval-Aug
 
 ---
 
-## Overview
-
-Evaluating RAG applications requires an evaluation strategy across **Retrieval Quality**, **Generation Groundedness**, and **User Experience Quality**. 
-
-This repository serves as a modular **RAG Evaluation Laboratory**. It decouples component testing from live pipeline testing, using **DeepEval** and a **DeepSeek LLM Judge** to benchmark performance against reference golden datasets.
-
----
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -38,6 +30,14 @@ This repository serves as a modular **RAG Evaluation Laboratory**. It decouples 
 - [Project Structure](#project-structure)
 - [Quickstart Guide](#quickstart-guide)
 - [Empirical Benchmark Findings](#empirical-benchmark-findings)
+
+---
+
+## Overview
+
+Evaluating RAG applications requires an evaluation strategy across **Retrieval Quality**, **Generation Groundedness**, and **User Experience Quality**. 
+
+This repository serves as a modular **RAG Evaluation Laboratory**. It decouples component testing from live pipeline testing, using **DeepEval** and a **DeepSeek LLM Judge** to benchmark performance against reference golden datasets.
 
 ---
 
