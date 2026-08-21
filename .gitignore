@@ -3,3 +3,4 @@ evals/.deepeval
 __pycache__/
 *.pyc
 .pytest_cache/
+.deepeval/

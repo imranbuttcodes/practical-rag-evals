@@ -28,30 +28,32 @@ RAG evaluation metrics are classified into two major categories depending on whe
 | **Context Relevance** | **Reference-Free** | `input`, `retrieval_context` | **NO** |
 | **Faithfulness** | **Reference-Free** | `actual_output`, `retrieval_context` | **NO** |
 | **Answer Relevance** | **Reference-Free** | `input`, `actual_output` | **NO** |
+| **G-Eval Correctness** | **Reference-Based** | `input`, `actual_output`, `expected_output` | **YES** |
+| **G-Eval Completeness** | **Reference-Based** | `input`, `actual_output`, `expected_output` | **YES** |
+| **G-Eval Style & Tone** | **Reference-Free** | `input`, `actual_output` | **NO** |
 
 ---
 
 ## Evaluation Levels & Metrics
 
 ```
-                     ┌───────────────────────────────────────────┐
-                     │          RAG EVALUATION SUITE             │
-                     └─────────────────────┬─────────────────────┘
+                      ┌─────────────────────────────────────────┐
+                      │        RAG EVALUATION HIERARCHY         │
+                      └────────────────────┬────────────────────┘
                                            │
-         ┌─────────────────────────────────┴─────────────────────────────────┐
-         │                                                                   │
-┌────────┴─────────────────┐                                       ┌─────────┴────────────────┐
-│ 1. COMPONENT-LEVEL EVALS │                                       │ 2. PIPELINE-LEVEL EVALS  │
-│    (Isolated Testing)    │                                       │    (End-to-End System)   │
-└────────┬─────────────────┘                                       └─────────┬────────────────┘
-         │                                                                   │
- ├── A. Retriever-Only                                              └── RAG Triad Pipeline
- │   ├── Contextual Recall (Reference-Based)                                ├── Context Relevance (Reference-Free)
- │   └── Contextual Precision (Reference-Based)                             ├── Faithfulness (Reference-Free)
- │                                                                          └── Answer Relevance (Reference-Free)
- └── B. Generator-Only (Fixed ground-truth context)
-     ├── Faithfulness (Reference-Free)
-     └── Answer Relevancy (Reference-Free)
+         ┌─────────────────────────────────┼─────────────────────────────────┐
+         │                                 │                                 │
+┌────────┴─────────────────┐     ┌─────────┴────────────────┐     ┌──────────┴────────────────┐
+│ 1. COMPONENT-LEVEL       │     │ 2. PIPELINE-LEVEL        │     │ 3. APPLICATION-LEVEL      │
+│    (Isolated Testing)    │     │    (RAG Triad)           │     │    (Business & UX Suite)  │
+└────────┬─────────────────┘     └─────────┬────────────────┘     └──────────┬────────────────┘
+         │                                 │                                 │
+ ├── Retriever-Only               └── RAG Triad Pipeline            └── G-Eval Custom Suite
+ │   ├── Contextual Recall                ├── Context Relevance              ├── Correctness
+ │   └── Contextual Precision             ├── Faithfulness                   ├── Completeness
+ └── Generator-Only                       └── Answer Relevance               └── Style & Tone
+     ├── Faithfulness
+     └── Answer Relevancy
 ```
 
 ---
@@ -158,7 +160,8 @@ Rag Eval Project/
 │   └── chroma_store/                     # Vector store & ingestion logs
 ├── goldens/
 │   ├── retriever_golden_dataset.json     # Ground-truth retriever test dataset
-│   └── faithfulness_golden_dataset.json    # Ground-truth faithfulness & generator dataset
+│   ├── faithfulness_golden_dataset.json    # Ground-truth faithfulness & generator dataset
+│   └── application_golden_dataset.json   # Ground-truth application UX (Correctness, Completeness, Style) dataset
 ├── src/
 │   ├── retriever.py                      # Vector ingestion, chunking & search
 │   ├── generator.py                      # RAG answer generation module
@@ -166,7 +169,8 @@ Rag Eval Project/
 ├── evals/
 │   ├── retreiver_eval.py                 # DeepEval retriever test suite
 │   ├── generator_eval.py                 # DeepEval generator test suite
-│   └── rag_triad_eval.py                 # RAG Triad end-to-end pipeline evaluation
+│   ├── rag_triad_eval.py                 # RAG Triad end-to-end pipeline evaluation
+│   └── geval_app_eval.py                 # G-Eval Application-Level Correctness evaluation
 ├── dump_chunks.py                        # Export all ChromaDB chunks to JSON
 ├── .env                                  # API keys
 ├── requirements.txt                      # Project dependencies
@@ -219,13 +223,22 @@ python src/retriever.py
   python evals/rag_triad_eval.py
   ```
 
+- **Run Application-Level G-Eval Suite**:
+  ```bash
+  python evals/geval_app_eval.py
+  ```
+
 ---
 
 ## Empirical Benchmark Findings
 
-By evaluating the RAG pipeline empirically, we observed the impact of parameter tuning on retrieval noise:
+By evaluating the RAG pipeline empirically across Component, Pipeline, and Application levels, we observed the impact of parameter tuning and prompt engineering:
 
-| Experiment Configuration | Context Relevance Score | Faithfulness Score | Answer Relevance Score |
-| :--- | :---: | :---: | :---: |
-| **Initial**: `chunk_size=1000`, `TOP_K=4` | **0.05** (High noise / fluff) | **1.00** (Zero hallucination) | **0.90** |
-| **Optimized**: `chunk_size=400`, `TOP_K=2` | **0.40** (8x Signal Improvement) | **1.00** (Zero hallucination) | **0.98** |
+| Evaluation Tier | Metric | Score / Pass Rate | Key Insight & Tuning Impact |
+| :--- | :--- | :---: | :--- |
+| **Pipeline (Triad)** | **Context Relevance** | **0.05 $\rightarrow$ 0.40 (8x Jump)** | Tuning `chunk_size=400` & `TOP_K=2` eliminated 70%+ of fluff. |
+| **Pipeline (Triad)** | **Faithfulness** | **1.00 (100% Pass)** | Zero-hallucination grounded generation. |
+| **Pipeline (Triad)** | **Answer Relevance** | **0.98 (94.4% Pass)** | Generated responses directly answer user queries. |
+| **Application (G-Eval)** | **Style & Tone** | **0.95 (100.0% PASS!)** | Anti-cliché & Markdown guidelines achieved 100% pass rate! |
+| **Application (G-Eval)** | **Completeness** | **0.77 (68.8% Pass)** | Increasing `TOP_K=3` improved multi-part query coverage. |
+| **Application (G-Eval)** | **Correctness** | **0.70 (62.5% Pass)** | Met passing threshold on 1-5 scale Rubric evaluation. |

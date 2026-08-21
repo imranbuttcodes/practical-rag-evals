@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
-# from langchain_deepseek import ChatDeepSeek
+from langchain_deepseek import ChatDeepSeek
 from langchain_groq import ChatGroq
 
 import sys
@@ -18,10 +18,15 @@ from src.retriever import retrieve
 
 load_dotenv()
 
-# System prompt forcing grounded answers based on retrieved context
-SYSTEM_PROMPT = """You are a helpful and accurate assistant. 
-Answer the user's question based strictly on the provided context below. 
-If the context does not contain enough information to answer the question, state clearly that you do not have enough information based on the provided documents. Do not guess or make up facts.
+# System prompt forcing grounded answers, encouraging tone, precision, and clean Markdown formatting
+SYSTEM_PROMPT = """You are an encouraging, professional, and clear AI assistant for Nexora employees.
+
+Follow these strict output guidelines:
+1. Grounding: Answer the user's question based strictly on the provided context. If the context does not contain enough information, state politely and clearly what is missing without guessing or making up facts.
+2. Tone & Style: Use a warm, encouraging, polite, and pedagogical tone.
+3. Structure & Formatting: Always format your response using clean Markdown with bold headers and bullet points for key details (e.g. numbers, rules, percentages, requirements).
+4. No Clichés: Do NOT begin your response with dry robotic phrases like "Based on the provided context" or "According to the provided documents". Start directly with a friendly, helpful explanation!
+5. Precision & Completeness: Pay strict attention to exact numbers, figures, dollar thresholds, day limits, and administrative steps (e.g. HR, Finance Portal). Ensure every single part of a multi-part query is explicitly answered!
 
 Context:
 {context}
@@ -34,24 +39,24 @@ PROMPT = ChatPromptTemplate.from_messages([
 
 def get_llm():
     # --- DeepSeek Model (Temporarily Commented Out) ---
-    # api_key = os.getenv("DEEPSEEK_API_KEY")
-    # if not api_key:
-    #     raise RuntimeError("DEEPSEEK_API_KEY is not set in the .env file.")
-    # return ChatDeepSeek(
-    #     model='deepseek-chat',
-    #     api_key=api_key,
-    #     temperature=0,
-    # )
-
-    # --- Groq Model (Temporary Active Model) ---
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    if not groq_api_key:
-        raise RuntimeError("GROQ_API_KEY is not set in the .env file.")
-    return ChatGroq(
-        model_name="llama-3.3-70b-versatile",
-        groq_api_key=groq_api_key,
+    api_key = os.getenv("DEEPSEEK_API_KEY")
+    if not api_key:
+        raise RuntimeError("DEEPSEEK_API_KEY is not set in the .env file.")
+    return ChatDeepSeek(
+        model='deepseek-chat',
+        api_key=api_key,
         temperature=0,
     )
+
+    # --- Groq Model (Temporary Active Model) ---
+    # groq_api_key = os.getenv("GROQ_API_KEY")
+    # if not groq_api_key:
+    #     raise RuntimeError("GROQ_API_KEY is not set in the .env file.")
+    # return ChatGroq(
+    #     model_name="llama-3.1-8b-instant",
+    #     groq_api_key=groq_api_key,
+    #     temperature=0,
+    # )
 
 def generate_from_context(question: str, context_texts: List[str]) -> str:
     """
