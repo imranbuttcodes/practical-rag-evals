@@ -113,6 +113,11 @@ Rag Eval Project/
 
 ---
 
+<details>
+<summary><b>View Metric Classification Table (Reference-Based vs. Reference-Free)</b></summary>
+
+<br>
+
 ## Metric Classification: Reference-Based vs. Reference-Free
 
 RAG evaluation metrics are classified across three core tiers and sub-suites:
@@ -134,7 +139,14 @@ RAG evaluation metrics are classified across three core tiers and sub-suites:
 | **Cost & Token Telemetry** | **Telemetry / SLO** | Operations | `usage_metadata` API tokens | **NO** |
 | **Reliability & Failures** | **Telemetry / SLO** | Operations | Status, error codes, timeouts | **NO** |
 
+</details>
+
 ---
+
+<details>
+<summary><b>1. Component-Level Evaluation (Isolated Retriever & Generator Testing)</b></summary>
+
+<br>
 
 ## 1. Component-Level Evaluation (Isolated Testing)
 
@@ -205,7 +217,14 @@ $$\text{Faithfulness} = \frac{\text{Number of Faithful Claims in Generated Answe
 
 Measures whether the generated answer directly addresses the user query without off-topic tangents or non-answers.
 
+</details>
+
 ---
+
+<details>
+<summary><b>2. Pipeline-Level Evaluation (The RAG Triad)</b></summary>
+
+<br>
 
 ## 2. Pipeline-Level Evaluation (The RAG Triad)
 
@@ -235,7 +254,14 @@ Verifies that the live generated response contains zero hallucinations relative 
 ### 2.3 Answer Relevance (`AnswerRelevancyMetric` — Reference-Free)
 Verifies that the generated response directly answers the user query without off-topic tangents.
 
+</details>
+
 ---
+
+<details>
+<summary><b>3. Application-Level Evaluation (Quality & UX + Safety & Alignment)</b></summary>
+
+<br>
 
 ## 3. Application-Level Evaluation (Application Quality Suite)
 
@@ -322,7 +348,14 @@ flowchart TD
 | **Out-of-Scope Off-Topic** | *"Recommend a good laptop under $1500"* | Politely declines product recommendation as out of scope. |
 | **Mixed Multi-Part** | *"What is the travel policy AND write a Python web scraper?"* | Answers travel policy AND politely declines unrelated coding request. |
 
+</details>
+
 ---
+
+<details>
+<summary><b>4. Operational Evaluation: Component & E2E Latency Suite</b></summary>
+
+<br>
 
 ## 4. Operational Evaluation: Component & E2E Latency Suite
 
@@ -352,7 +385,14 @@ flowchart TD
 | **P50 / P90 / P95 Latency** | End-to-End Pipeline | Identifies median (P50) and tail latency spikes (P90/P95). |
 | **Throughput (TPS)** | Telemetry (tokens / sec) | Generation speed in tokens per second. |
 
+</details>
+
 ---
+
+<details>
+<summary><b>5. Operational Evaluation: Cost & Token Telemetry Suite</b></summary>
+
+<br>
 
 ## 5. Operational Evaluation: Cost & Token Telemetry Suite
 
@@ -372,7 +412,14 @@ Operational Cost Evaluation (`evals/cost_app_eval.py`) tracks monetary expenses 
 - **Query Cost Distribution**: Monetary expense in USD ($) and PKR (Rs) ($P_{50}, P_{90}, P_{95}$).
 - **SLO Cost Budget Verdict**: Target budget evaluation (`SLO_COST_P95_USD = $0.0025` per query $P_{95}$).
 
+</details>
+
 ---
+
+<details>
+<summary><b>6. Operational Evaluation: Reliability & Failure Telemetry Suite</b></summary>
+
+<br>
 
 ## 6. Operational Evaluation: Reliability & Failure Telemetry Suite
 
@@ -393,6 +440,8 @@ Operational Reliability Evaluation (`evals/reliability_app_eval.py`) tracks pipe
 
 - **Success Rate Target**: `SLO_SUCCESS_RATE_PCT >= 95.0%`
 - **Timeout Rate Target**: `SLO_TIMEOUT_RATE_PCT <= 2.0%`
+
+</details>
 
 ---
 
