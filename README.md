@@ -84,9 +84,9 @@ RAG evaluation metrics are classified across three core tiers and sub-suites:
 └────────┬─────────────────┘                 └─────────┬────────────────┘                 └──────────┬────────────────┘
          │                                             │                                             │
  ├── Retriever                                 └── RAG Triad                      ├── Application Quality
- │   ├── Contextual Recall                                                        │   ├── G-Eval Correctness
- │   └── Contextual Precision                                                     │   ├── G-Eval Completeness
- └── Generator                                                                    │   └── G-Eval Style & Tone
+ │   ├── Contextual Recall                         ├── Context Relevance              │   ├── G-Eval Correctness
+ │   └── Contextual Precision                      ├── Faithfulness                   │   ├── G-Eval Completeness
+ └── Generator                                     └── Answer Relevance               │   └── G-Eval Style & Tone
      ├── Faithfulness                                                             ├── Safety
      └── Answer Relevancy                                                         │   ├── Toxicity Metric
                                                                                   │   ├── Information Leakage
