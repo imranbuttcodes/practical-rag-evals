@@ -5,15 +5,16 @@
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-v0.5-orange.svg)](https://www.trychroma.com/)
 [![DeepEval](https://img.shields.io/badge/DeepEval-Framework-purple.svg)](https://github.com/confident-ai/deepeval)
 
-Production-grade 3-Tier RAG Evaluation Workbench benchmarking **Component Level** (Retriever & Generator in isolation), **Pipeline Level** (End-to-End RAG Triad), and **Application Level** (Business & UX G-Eval Suite) — empirically tuned chunking for an 8x Context Relevance jump and 100% Style pass rate.
+Comprehensive RAG Evaluation Workbench benchmarking **Component Level** (Retriever & Generator in isolation), **Pipeline Level** (End-to-End RAG Triad), and **Application Level** (Application Quality, Safety & Alignment, and Operations).
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Metric Classification: Reference-Based vs. Reference-Free](#metric-classification-reference-based-vs-reference-free)
 - [Evaluation Levels & Metrics](#evaluation-levels--metrics)
+- [Project Structure](#project-structure)
+- [Metric Classification: Reference-Based vs. Reference-Free](#metric-classification-reference-based-vs-reference-free)
 - [1. Component-Level Evaluation (Isolated Testing)](#1-component-level-evaluation-isolated-testing)
   - [1.1 Contextual Recall](#11-contextual-recall-retriever-component--reference-based)
   - [1.2 Contextual Precision](#12-contextual-precision-retriever-component--reference-based)
@@ -23,7 +24,7 @@ Production-grade 3-Tier RAG Evaluation Workbench benchmarking **Component Level*
   - [2.1 Context Relevance](#21-context-relevance-contextualrelevancymetric--reference-free)
   - [2.2 Faithfulness](#22-faithfulness-faithfulnessmetric--reference-free)
   - [2.3 Answer Relevance](#23-answer-relevance-answerrelevancymetric--reference-free)
-- [3. Application-Level Evaluation (Quality & UX Suite)](#3-application-level-evaluation-quality--ux-suite)
+- [3. Application-Level Evaluation (Application Quality Suite)](#3-application-level-evaluation-quality--ux-suite)
   - [3.1 G-Eval Correctness](#31-g-eval-correctness-correctness_geval--reference-based)
   - [3.2 G-Eval Completeness](#32-g-eval-completeness-completeness_geval--reference-based)
   - [3.3 G-Eval Style & Tone](#33-g-eval-style--tone-style_geval--reference-free)
@@ -33,7 +34,6 @@ Production-grade 3-Tier RAG Evaluation Workbench benchmarking **Component Level*
 - [4. Operational Evaluation: Component & E2E Latency Suite](#4-operational-evaluation-component--e2e-latency-suite)
 - [5. Operational Evaluation: Cost & Token Telemetry Suite](#5-operational-evaluation-cost--token-telemetry-suite)
 - [6. Operational Evaluation: Reliability & Failure Telemetry Suite](#6-operational-evaluation-reliability--failure-telemetry-suite)
-- [Project Structure](#project-structure)
 - [Quickstart Guide](#quickstart-guide)
 - [Empirical Benchmark Findings](#empirical-benchmark-findings)
 
@@ -44,6 +44,72 @@ Production-grade 3-Tier RAG Evaluation Workbench benchmarking **Component Level*
 Evaluating RAG applications requires an evaluation strategy across **Retrieval Quality**, **Generation Groundedness**, and **User Experience Quality**. 
 
 This repository serves as a modular **RAG Evaluation Laboratory**. It decouples component testing from live pipeline testing, using **DeepEval** and a **DeepSeek LLM Judge** to benchmark performance against reference golden datasets.
+
+---
+
+## Evaluation Levels & Metrics
+
+```text
+                                  ┌─────────────────────────────────────────┐
+                                  │             RAG EVAL SUITE              │
+                                  └────────────────────┬────────────────────┘
+                                                       │
+         ┌─────────────────────────────────────────────┼─────────────────────────────────────────────┐
+         │                                             │                                             │
+┌────────┴─────────────────┐                 ┌─────────┴────────────────┐                 ┌──────────┴────────────────┐
+│  Component Level Evals   │                 │   Pipeline Level Evals   │                 │  Application Level Evals  │
+└────────┬─────────────────┘                 └────────┬────────────────┘                 └──────────┬────────────────┘
+         │                                             │                                             │
+ ├── Retriever                                 └── RAG Triad                      ├── Application Quality
+ │   ├── Contextual Recall                         ├── Context Relevance              │   ├── G-Eval Correctness
+ │   └── Contextual Precision                      ├── Faithfulness                   │   ├── G-Eval Completeness
+ └── Generator                                     └── Answer Relevance               │   └── G-Eval Style & Tone
+     ├── Faithfulness                                                             ├── Safety
+     └── Answer Relevancy                                                         │   ├── Toxicity Metric
+                                                                                  │   ├── Information Leakage
+                                                                                  │   └── Scope Adherence
+                                                                                  └── Operations
+                                                                                      ├── Latency & TTFT
+                                                                                      ├── Cost & Token Telemetry
+                                                                                      └── Reliability & Failures
+```
+
+---
+
+## Project Structure
+
+```
+Rag Eval Project/
+├── data/
+│   ├── Nexora_Company_Policy_Manual.pdf  # Document corpus
+│   └── chroma_store/                     # Vector store & ingestion logs
+├── goldens/
+│   ├── retriever_golden_dataset.json     # Ground-truth retriever test dataset
+│   ├── faithfulness_golden_dataset.json    # Ground-truth faithfulness & generator dataset
+│   ├── quality_golden_dataset.json       # Ground-truth application UX & quality (Correctness, Completeness, Style) dataset
+│   ├── toxicity_golden_dataset.json      # Toxicity & Safety benchmark dataset (Toxic, Benign, Mixed)
+│   ├── leakage_golden_dataset.json       # Information Leakage benchmark dataset (System Prompt, Corpus Dump, PII)
+│   └── scope_golden_dataset.json         # Scope Adherence benchmark dataset (In-Scope, Out-of-Scope, Mixed)
+├── src/
+│   ├── retriever.py                      # Vector ingestion, chunking & search
+│   ├── generator.py                      # RAG answer generation module
+│   └── garbage_testing.py                # Embedding test script
+├── evals/
+│   ├── judge.py                          # Shared DeepSeek LLM Judge module
+│   ├── retreiver_eval.py                 # DeepEval retriever test suite
+│   ├── generator_eval.py                 # DeepEval generator test suite
+│   ├── rag_triad_eval.py                 # RAG Triad end-to-end pipeline evaluation
+│   ├── quality_app_eval.py               # Application Quality & UX (Correctness, Completeness, Style) suite
+│   ├── leakage_app_eval.py               # Application Safety (Information Leakage) suite
+│   ├── scope_app_eval.py                 # Application Safety (Scope Adherence) suite
+│   ├── latency_app_eval.py               # Application Operational (Component & E2E Latency) suite
+│   ├── cost_app_eval.py                  # Application Operational (Token Costs & SLO Budget) suite
+│   └── reliability_app_eval.py           # Application Operational (Reliability & Failure Telemetry) suite
+├── dump_chunks.py                        # Export all ChromaDB chunks to JSON
+├── .env                                  # API keys
+├── requirements.txt                      # Project dependencies
+└── README.md
+```
 
 ---
 
@@ -67,35 +133,6 @@ RAG evaluation metrics are classified across three core tiers and sub-suites:
 | **Latency (E2E & TTFT)** | **Telemetry / SLO** | Operations | `time.perf_counter()` timings | **NO** |
 | **Cost & Token Telemetry** | **Telemetry / SLO** | Operations | `usage_metadata` API tokens | **NO** |
 | **Reliability & Failures** | **Telemetry / SLO** | Operations | Status, error codes, timeouts | **NO** |
-
----
-
-## Evaluation Levels & Metrics
-
-```text
-                                  ┌─────────────────────────────────────────┐
-                                  │             RAG EVAL SUITE              │
-                                  └────────────────────┬────────────────────┘
-                                                       │
-         ┌─────────────────────────────────────────────┼─────────────────────────────────────────────┐
-         │                                             │                                             │
-┌────────┴─────────────────┐                 ┌─────────┴────────────────┐                 ┌──────────┴────────────────┐
-│  Component Level Evals   │                 │   Pipeline Level Evals   │                 │  Application Level Evals  │
-└────────┬─────────────────┘                 └─────────┬────────────────┘                 └──────────┬────────────────┘
-         │                                             │                                             │
- ├── Retriever                                 └── RAG Triad                      ├── Application Quality
- │   ├── Contextual Recall                         ├── Context Relevance              │   ├── G-Eval Correctness
- │   └── Contextual Precision                      ├── Faithfulness                   │   ├── G-Eval Completeness
- └── Generator                                     └── Answer Relevance               │   └── G-Eval Style & Tone
-     ├── Faithfulness                                                             ├── Safety
-     └── Answer Relevancy                                                         │   ├── Toxicity Metric
-                                                                                  │   ├── Information Leakage
-                                                                                  │   └── Scope Adherence
-                                                                                  └── Operations
-                                                                                      ├── Latency & TTFT
-                                                                                      ├── Cost & Token Telemetry
-                                                                                      └── Reliability & Failures
-```
 
 ---
 
@@ -200,9 +237,9 @@ Verifies that the generated response directly answers the user query without off
 
 ---
 
-## 3. Application-Level Evaluation (Quality & UX Suite)
+## 3. Application-Level Evaluation (Application Quality Suite)
 
-The **Application-Level Quality & UX Suite** (`evals/quality_app_eval.py`) evaluates subjective business requirements, user experience (UX), and brand tone using **G-Eval (GEval)** with explicit 5-tier integer score rubrics.
+The **Application Quality Suite** (`evals/quality_app_eval.py`) evaluates subjective business requirements, user experience, and brand tone using **G-Eval (GEval)** with explicit 5-tier integer score rubrics.
 
 ```mermaid
 flowchart TD
@@ -359,43 +396,6 @@ Operational Reliability Evaluation (`evals/reliability_app_eval.py`) tracks pipe
 
 ---
 
-## Project Structure
-
-```
-Rag Eval Project/
-├── data/
-│   ├── Nexora_Company_Policy_Manual.pdf  # Document corpus
-│   └── chroma_store/                     # Vector store & ingestion logs
-├── goldens/
-│   ├── retriever_golden_dataset.json     # Ground-truth retriever test dataset
-│   ├── faithfulness_golden_dataset.json    # Ground-truth faithfulness & generator dataset
-│   ├── quality_golden_dataset.json       # Ground-truth application UX & quality (Correctness, Completeness, Style) dataset
-│   ├── toxicity_golden_dataset.json      # Toxicity & Safety benchmark dataset (Toxic, Benign, Mixed)
-│   ├── leakage_golden_dataset.json       # Information Leakage benchmark dataset (System Prompt, Corpus Dump, PII)
-│   └── scope_golden_dataset.json         # Scope Adherence benchmark dataset (In-Scope, Out-of-Scope, Mixed)
-├── src/
-│   ├── retriever.py                      # Vector ingestion, chunking & search
-│   ├── generator.py                      # RAG answer generation module
-│   └── garbage_testing.py                # Embedding test script
-├── evals/
-│   ├── judge.py                          # Shared DeepSeek LLM Judge module
-│   ├── retreiver_eval.py                 # DeepEval retriever test suite
-│   ├── generator_eval.py                 # DeepEval generator test suite
-│   ├── rag_triad_eval.py                 # RAG Triad end-to-end pipeline evaluation
-│   ├── quality_app_eval.py               # Application Quality & UX (Correctness, Completeness, Style) suite
-│   ├── leakage_app_eval.py               # Application Safety (Information Leakage) suite
-│   ├── scope_app_eval.py                 # Application Safety (Scope Adherence) suite
-│   ├── latency_app_eval.py               # Application Operational (Component & E2E Latency) suite
-│   ├── cost_app_eval.py                  # Application Operational (Token Costs & SLO Budget) suite
-│   └── reliability_app_eval.py           # Application Operational (Reliability & Failure Telemetry) suite
-├── dump_chunks.py                        # Export all ChromaDB chunks to JSON
-├── .env                                  # API keys
-├── requirements.txt                      # Project dependencies
-└── README.md
-```
-
----
-
 ## Quickstart Guide
 
 ### 1. Environment Setup
@@ -440,7 +440,7 @@ python src/retriever.py
   python evals/rag_triad_eval.py
   ```
 
-- **Run Application Quality & UX Suite (Correctness, Completeness, Style)**:
+- **Run Application Quality Suite (Correctness, Completeness, Style)**:
   ```bash
   python evals/quality_app_eval.py
   ```
