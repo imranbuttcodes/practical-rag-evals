@@ -23,13 +23,16 @@ Production-grade 3-Tier RAG Evaluation Workbench benchmarking **Component Level*
   - [2.1 Context Relevance](#21-context-relevance-contextualrelevancymetric--reference-free)
   - [2.2 Faithfulness](#22-faithfulness-faithfulnessmetric--reference-free)
   - [2.3 Answer Relevance](#23-answer-relevance-answerrelevancymetric--reference-free)
-- [3. Application-Level Evaluation (G-Eval Suite)](#3-application-level-evaluation-g-eval-suite)
+- [3. Application-Level Evaluation (Quality & UX Suite)](#3-application-level-evaluation-quality--ux-suite)
   - [3.1 G-Eval Correctness](#31-g-eval-correctness-correctness_geval--reference-based)
   - [3.2 G-Eval Completeness](#32-g-eval-completeness-completeness_geval--reference-based)
   - [3.3 G-Eval Style & Tone](#33-g-eval-style--tone-style_geval--reference-free)
   - [3.4 Application Safety: Toxicity Metric](#34-application-safety-toxicity-metric-toxicitymetric--reference-free)
   - [3.5 Application Safety: Information Leakage Suite](#35-application-safety-information-leakage-suite-evalsleakage_app_evalpy)
   - [3.6 Application Safety: Scope Adherence Suite](#36-application-safety-scope-adherence-suite-evalsscope_app_evalpy)
+- [4. Operational Evaluation: Component & E2E Latency Suite](#4-operational-evaluation-component--e2e-latency-suite)
+- [5. Operational Evaluation: Cost & Token Telemetry Suite](#5-operational-evaluation-cost--token-telemetry-suite)
+- [6. Operational Evaluation: Reliability & Failure Telemetry Suite](#6-operational-evaluation-reliability--failure-telemetry-suite)
 - [Project Structure](#project-structure)
 - [Quickstart Guide](#quickstart-guide)
 - [Empirical Benchmark Findings](#empirical-benchmark-findings)
@@ -46,42 +49,52 @@ This repository serves as a modular **RAG Evaluation Laboratory**. It decouples 
 
 ## Metric Classification: Reference-Based vs. Reference-Free
 
-RAG evaluation metrics are classified into two major categories depending on whether they require a ground-truth reference answer (`expected_output`):
+RAG evaluation metrics are classified across three core tiers and sub-suites:
 
-| Metric | Category | Required Inputs | Needs Ground Truth (`expected_output`)? |
-| :--- | :---: | :--- | :---: |
-| **Contextual Recall** | **Reference-Based** | `expected_output`, `retrieval_context` | **YES** |
-| **Contextual Precision** | **Reference-Based** | `input`, `expected_output`, `retrieval_context` | **YES** |
-| **Context Relevance** | **Reference-Free** | `input`, `retrieval_context` | **NO** |
-| **Faithfulness** | **Reference-Free** | `actual_output`, `retrieval_context` | **NO** |
-| **Answer Relevance** | **Reference-Free** | `input`, `actual_output` | **NO** |
-| **G-Eval Correctness** | **Reference-Based** | `input`, `actual_output`, `expected_output` | **YES** |
-| **G-Eval Completeness** | **Reference-Based** | `input`, `actual_output`, `expected_output` | **YES** |
-| **G-Eval Style & Tone** | **Reference-Free** | `input`, `actual_output` | **NO** |
-| **Toxicity Metric** | **Reference-Free** | `input`, `actual_output` | **NO** |
+| Metric | Category | Evaluation Tier | Required Inputs | Needs Ground Truth (`expected_output`)? |
+| :--- | :---: | :---: | :--- | :---: |
+| **Contextual Recall** | **Reference-Based** | Component (Retriever) | `expected_output`, `retrieval_context` | **YES** |
+| **Contextual Precision** | **Reference-Based** | Component (Retriever) | `input`, `expected_output`, `retrieval_context` | **YES** |
+| **Context Relevance** | **Reference-Free** | Pipeline (RAG Triad) | `input`, `retrieval_context` | **NO** |
+| **Faithfulness** | **Reference-Free** | Component / Pipeline | `actual_output`, `retrieval_context` | **NO** |
+| **Answer Relevance** | **Reference-Free** | Component / Pipeline | `input`, `actual_output` | **NO** |
+| **G-Eval Correctness** | **Reference-Based** | Application Quality | `input`, `actual_output`, `expected_output` | **YES** |
+| **G-Eval Completeness** | **Reference-Based** | Application Quality | `input`, `actual_output`, `expected_output` | **YES** |
+| **G-Eval Style & Tone** | **Reference-Free** | Application Quality | `input`, `actual_output` | **NO** |
+| **Toxicity Metric** | **Reference-Free** | Safety | `input`, `actual_output` | **NO** |
+| **Information Leakage** | **Deterministic / Judge** | Safety | `input`, `actual_output`, `retrieval_context` | **NO** |
+| **Scope Adherence** | **Deterministic / Judge** | Safety | `input`, `actual_output` | **NO** |
+| **Latency (E2E & TTFT)** | **Telemetry / SLO** | Operations | `time.perf_counter()` timings | **NO** |
+| **Cost & Token Telemetry** | **Telemetry / SLO** | Operations | `usage_metadata` API tokens | **NO** |
+| **Reliability & Failures** | **Telemetry / SLO** | Operations | Status, error codes, timeouts | **NO** |
 
 ---
 
 ## Evaluation Levels & Metrics
 
-```
-                      ┌─────────────────────────────────────────┐
-                      │        RAG EVALUATION HIERARCHY         │
-                      └────────────────────┬────────────────────┘
-                                           │
-         ┌─────────────────────────────────┼─────────────────────────────────┐
-         │                                 │                                 │
-┌────────┴─────────────────┐     ┌─────────┴────────────────┐     ┌──────────┴────────────────┐
-│ 1. COMPONENT-LEVEL       │     │ 2. PIPELINE-LEVEL        │     │ 3. APPLICATION-LEVEL      │
-│    (Isolated Testing)    │     │    (RAG Triad)           │     │    (Business & UX Suite)  │
-└────────┬─────────────────┘     └─────────┬────────────────┘     └──────────┬────────────────┘
-         │                                 │                                 │
- ├── Retriever-Only               └── RAG Triad Pipeline            └── G-Eval Custom Suite
- │   ├── Contextual Recall                ├── Context Relevance              ├── Correctness
- │   └── Contextual Precision             ├── Faithfulness                   ├── Completeness
- └── Generator-Only                       └── Answer Relevance               └── Style & Tone
-     ├── Faithfulness
-     └── Answer Relevancy
+```text
+                                  ┌─────────────────────────────────────────┐
+                                  │             RAG EVAL SUITE              │
+                                  └────────────────────┬────────────────────┘
+                                                       │
+         ┌─────────────────────────────────────────────┼─────────────────────────────────────────────┐
+         │                                             │                                             │
+┌────────┴─────────────────┐                 ┌─────────┴────────────────┐                 ┌──────────┴────────────────┐
+│  Component Level Evals   │                 │   Pipeline Level Evals   │                 │  Application Level Evals  │
+└────────┬─────────────────┘                 └─────────┬────────────────┘                 └──────────┬────────────────┘
+         │                                             │                                             │
+ ├── Retriever                                 └── RAG Triad                      ├── Application Quality
+ │   ├── Contextual Recall                                                        │   ├── G-Eval Correctness
+ │   └── Contextual Precision                                                     │   ├── G-Eval Completeness
+ └── Generator                                                                    │   └── G-Eval Style & Tone
+     ├── Faithfulness                                                             ├── Safety
+     └── Answer Relevancy                                                         │   ├── Toxicity Metric
+                                                                                  │   ├── Information Leakage
+                                                                                  │   └── Scope Adherence
+                                                                                  └── Operations
+                                                                                      ├── Latency & TTFT
+                                                                                      ├── Cost & Token Telemetry
+                                                                                      └── Reliability & Failures
 ```
 
 ---
@@ -187,9 +200,9 @@ Verifies that the generated response directly answers the user query without off
 
 ---
 
-## 3. Application-Level Evaluation (G-Eval Suite)
+## 3. Application-Level Evaluation (Quality & UX Suite)
 
-The **Application-Level Suite** evaluates subjective business requirements, user experience (UX), and brand tone using **G-Eval (GEval)** with explicit 5-tier integer score rubrics.
+The **Application-Level Quality & UX Suite** (`evals/quality_app_eval.py`) evaluates subjective business requirements, user experience (UX), and brand tone using **G-Eval (GEval)** with explicit 5-tier integer score rubrics.
 
 ```mermaid
 flowchart TD
@@ -274,6 +287,78 @@ flowchart TD
 
 ---
 
+## 4. Operational Evaluation: Component & E2E Latency Suite
+
+Operational Latency Evaluation (`evals/latency_app_eval.py`) tracks the speed and responsiveness of the RAG pipeline without requiring LLM Judges or golden dataset scoring.
+
+```mermaid
+flowchart TD
+    Query["Incoming User Query"] --> Warmup["Cold Start Warmup Check"]
+    Warmup --> Pipeline["RAG Pipeline Execution"]
+    
+    subgraph Components ["Component-Level Latency Telemetry"]
+        Pipeline --> RetTime["1. Retriever Latency (ChromaDB Search)"]
+        Pipeline --> TTFT["2. Generator TTFT (Time To First Token)"]
+        Pipeline --> GenTime["3. Generator Execution Latency"]
+    end
+    
+    Components --> E2E["End-to-End Latency & Percentiles (P50, P90, P95)"]
+```
+
+### ⚡ Tracked Telemetry Metrics
+
+| Latency Metric | Telemetry Scope | Purpose |
+| :--- | :--- | :--- |
+| **Retriever Latency** | Component (Vector DB Search) | Measures embedding & vector retrieval overhead. |
+| **Generator TTFT** | Component (Streaming First Token) | Time taken to stream the *very first token chunk*. Critical for perceived user UX. |
+| **Generator Execution** | Component (LLM Generation) | Total time to stream the complete grounded answer. |
+| **P50 / P90 / P95 Latency** | End-to-End Pipeline | Identifies median (P50) and tail latency spikes (P90/P95). |
+| **Throughput (TPS)** | Telemetry (tokens / sec) | Generation speed in tokens per second. |
+
+---
+
+## 5. Operational Evaluation: Cost & Token Telemetry Suite
+
+Operational Cost Evaluation (`evals/cost_app_eval.py`) tracks monetary expenses incurred across prompt context and generated response completion tokens using official OpenRouter DeepSeek V3 pricing rates.
+
+### 💰 OpenRouter DeepSeek V3 Pricing Rates
+
+| Token Category | OpenRouter Model | Price Rate (USD) | Price Rate (PKR) |
+| :--- | :--- | :--- | :--- |
+| **Input (Prompt) Tokens** | `deepseek/deepseek-chat` | **$0.2574 per 1M tokens** | ~Rs 71.56 PKR per 1M tokens |
+| **Output (Completion) Tokens** | `deepseek/deepseek-chat` | **$1.0290 per 1M tokens** | ~Rs 286.06 PKR per 1M tokens |
+
+### Evaluated Cost & Token Metrics
+
+- **Prompt Token Count**: System Prompt + Retrieved Context Chunks + User Question tokens ($P_{50}, P_{90}, P_{95}$).
+- **Completion Token Count**: Generated LLM Answer tokens ($P_{50}, P_{90}, P_{95}$).
+- **Query Cost Distribution**: Monetary expense in USD ($) and PKR (Rs) ($P_{50}, P_{90}, P_{95}$).
+- **SLO Cost Budget Verdict**: Target budget evaluation (`SLO_COST_P95_USD = $0.0025` per query $P_{95}$).
+
+---
+
+## 6. Operational Evaluation: Reliability & Failure Telemetry Suite
+
+Operational Reliability Evaluation (`evals/reliability_app_eval.py`) tracks pipeline availability, error rates, timeout rates, and failure categories across all benchmark queries without requiring LLM Judges.
+
+### Categorized Failure Categories Tracked
+
+| Failure Category | Trigger Condition & Description |
+| :--- | :--- |
+| **LLM API Network/Server Error** | 500/503 HTTP gateway errors or connection resets from upstream LLM provider. |
+| **Rate Limit Error (429)** | 429 HTTP Too Many Requests triggered by token quota or concurrency limits. |
+| **Retrieval Failure** | Vector store returns zero matching document chunks or connection drops. |
+| **Timeout Exceeded** | Request execution breaches maximum allowed timeout threshold (`MAX_TIMEOUT_SEC = 10.0s`). |
+| **Parser / Empty Response Error** | Generator yields an empty or unparseable response string. |
+| **Internal Exception** | Unhandled Python exception inside application pipeline. |
+
+### Evaluated Reliability SLO Budgets
+
+- **Success Rate Target**: `SLO_SUCCESS_RATE_PCT >= 95.0%`
+- **Timeout Rate Target**: `SLO_TIMEOUT_RATE_PCT <= 2.0%`
+
+---
+
 ## Project Structure
 
 ```
@@ -284,7 +369,7 @@ Rag Eval Project/
 ├── goldens/
 │   ├── retriever_golden_dataset.json     # Ground-truth retriever test dataset
 │   ├── faithfulness_golden_dataset.json    # Ground-truth faithfulness & generator dataset
-│   ├── application_golden_dataset.json   # Ground-truth application UX (Correctness, Completeness, Style) dataset
+│   ├── quality_golden_dataset.json       # Ground-truth application UX & quality (Correctness, Completeness, Style) dataset
 │   ├── toxicity_golden_dataset.json      # Toxicity & Safety benchmark dataset (Toxic, Benign, Mixed)
 │   ├── leakage_golden_dataset.json       # Information Leakage benchmark dataset (System Prompt, Corpus Dump, PII)
 │   └── scope_golden_dataset.json         # Scope Adherence benchmark dataset (In-Scope, Out-of-Scope, Mixed)
@@ -293,12 +378,16 @@ Rag Eval Project/
 │   ├── generator.py                      # RAG answer generation module
 │   └── garbage_testing.py                # Embedding test script
 ├── evals/
+│   ├── judge.py                          # Shared DeepSeek LLM Judge module
 │   ├── retreiver_eval.py                 # DeepEval retriever test suite
 │   ├── generator_eval.py                 # DeepEval generator test suite
 │   ├── rag_triad_eval.py                 # RAG Triad end-to-end pipeline evaluation
-│   ├── geval_app_eval.py                 # G-Eval Application-Level (Correctness, Completeness, Style) suite
-│   ├── toxicity_app_eval.py              # Application Safety (Toxicity Metric) suite
-│   └── leakage_app_eval.py               # Application Safety (System Prompt, Corpus, PII Leakage) suite
+│   ├── quality_app_eval.py               # Application Quality & UX (Correctness, Completeness, Style) suite
+│   ├── leakage_app_eval.py               # Application Safety (Information Leakage) suite
+│   ├── scope_app_eval.py                 # Application Safety (Scope Adherence) suite
+│   ├── latency_app_eval.py               # Application Operational (Component & E2E Latency) suite
+│   ├── cost_app_eval.py                  # Application Operational (Token Costs & SLO Budget) suite
+│   └── reliability_app_eval.py           # Application Operational (Reliability & Failure Telemetry) suite
 ├── dump_chunks.py                        # Export all ChromaDB chunks to JSON
 ├── .env                                  # API keys
 ├── requirements.txt                      # Project dependencies
@@ -351,9 +440,9 @@ python src/retriever.py
   python evals/rag_triad_eval.py
   ```
 
-- **Run Application-Level G-Eval Suite**:
+- **Run Application Quality & UX Suite (Correctness, Completeness, Style)**:
   ```bash
-  python evals/geval_app_eval.py
+  python evals/quality_app_eval.py
   ```
 
 - **Run Application Safety Evaluation (Toxicity Metric)**:
@@ -369,6 +458,21 @@ python src/retriever.py
 - **Run Application Safety Evaluation (Scope Adherence Suite)**:
   ```bash
   python evals/scope_app_eval.py
+  ```
+
+- **Run Application Operational Evaluation (Component & E2E Latency Suite)**:
+  ```bash
+  python evals/latency_app_eval.py
+  ```
+
+- **Run Application Operational Evaluation (Cost & Token Telemetry Suite)**:
+  ```bash
+  python evals/cost_app_eval.py
+  ```
+
+- **Run Application Operational Evaluation (Reliability & Failure Telemetry Suite)**:
+  ```bash
+  python evals/reliability_app_eval.py
   ```
 
 ---
@@ -394,3 +498,8 @@ By evaluating the RAG pipeline empirically across Component, Pipeline, and Appli
 | **Application (Safety)** | **Corpus Content Leakage** | **1.00 (100.0% PASS!)** | Rule #6 in `SYSTEM_PROMPT` eliminated raw `<context>` XML tag dumps! |
 | **Application (Safety)** | **PII Leakage** | **0.67 (66.7% Pass)** | Refused personal SSNs, home addresses & card numbers. |
 | **Application (Safety)** | **Scope Adherence** | **1.00 (100.0% PASS!)** | Rule #8 in `SYSTEM_PROMPT` achieved perfect handling of mixed & off-topic queries! |
+| **Operational (Latency)** | **End-to-End P95 Latency** | **4734.8 ms (PASS)** | Met SLO target (<= 5000 ms). Mean total duration 3760.9 ms. |
+| **Operational (Latency)** | **First Token (TTFT) P95** | **1926.8 ms (PASS)** | Met SLO target (<= 2500 ms). Users see first streaming token in ~1.5s! |
+| **Operational (Latency)** | **Retriever P95 Latency** | **682.8 ms** | Fast ChromaDB similarity search (mean retrieval duration 579.9 ms). |
+| **Operational (Reliability)** | **Success Rate** | **100.0% (PASS)** | Met SLO target (>= 95.0%). 16/16 requests completed without errors. |
+| **Operational (Reliability)** | **Timeout Rate** | **0.0% (PASS)** | Met SLO target (<= 2.0%). Zero requests breached the 10.0s deadline. |

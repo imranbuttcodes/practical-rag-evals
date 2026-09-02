@@ -1,0 +1,127 @@
+{
+  "dataset_name": "quality_golden_dataset",
+  "version": "2.0",
+  "purpose": "Application-level evaluation for RAG chatbot quality covering Correctness, Completeness, and Tone/Style using G-Eval rubrics.",
+  "corpus": "Nexora_Company_Policy_Manual.pdf",
+  "notes": [
+    "This dataset evaluates application-level user experience (UX) and business requirements.",
+    "Targeted for G-Eval (GEval) custom metrics in evals/quality_app_eval.py."
+  ],
+  "questions": [
+    {
+      "id": "APP01",
+      "question": "What are the working hours for full-time employees, lunch break policy, and how remote work fits into this schedule?",
+      "expected_output": "Full-time employees work at least 35 hours per week during standard business hours from 9:00 AM to 6:00 PM local time, with a one-hour unpaid lunch break. Remote work is permitted up to 3 days per week with manager approval, provided employees remain reachable during core hours of 10:00 AM to 4:00 PM.",
+      "sub_questions": [
+        "Full-time working hours requirement (35+ hrs/week, 9 AM - 6 PM)",
+        "One-hour unpaid lunch break policy",
+        "Remote work policy (up to 3 days/week, core hours 10 AM - 4 PM)"
+      ],
+      "target_tone": "Encouraging, clear, professional, and helpful.",
+      "relevant_sections": [
+        "2.2 Employment Classifications",
+        "4.1 Working Hours and Attendance",
+        "6.2 Remote and Hybrid Work Policy"
+      ]
+    },
+    {
+      "id": "APP02",
+      "question": "What is the policy for Paid Time Off (PTO) accrual for a new hire versus an employee with 5 years of service, and how many PTO days can be carried over?",
+      "expected_output": "A new hire (0–2 years of service) accrues 15 PTO days per year (1.25 days/month), while an employee with 5 years of service accrues 20 PTO days per year (1.67 days/month). Unused PTO may be carried over up to a maximum of 5 days into the following calendar year.",
+      "sub_questions": [
+        "PTO accrual for 0-2 years service (15 days/yr)",
+        "PTO accrual for 5 years service (20 days/yr)",
+        "Maximum PTO carryover limit (5 days)"
+      ],
+      "target_tone": "Clear, structured, and informative.",
+      "relevant_sections": [
+        "4.2 Paid Time Off (PTO)"
+      ]
+    },
+    {
+      "id": "APP03",
+      "question": "I received a $150 gift from a vendor. Is this allowed under company policy, and what steps should I take if there's a conflict of interest?",
+      "expected_output": "Accepting a $150 gift from a vendor is not allowed because Company policy prohibits accepting gifts or hospitality valued above $100 USD. If an actual or potential conflict of interest arises, you must disclose it in writing to your manager and the People & Culture Department.",
+      "sub_questions": [
+        "Evaluation of $150 gift against $100 threshold",
+        "Required disclosure process (written notice to manager & HR)"
+      ],
+      "target_tone": "Empathetic, clear, advisory, and professional.",
+      "relevant_sections": [
+        "3.2 Conflicts of Interest"
+      ]
+    },
+    {
+      "id": "APP04",
+      "question": "How much paid leave is provided for parental leave versus bereavement leave for an immediate family member?",
+      "expected_output": "Eligible employees receive 16 weeks of paid parental leave following the birth, adoption, or foster placement of a child. For bereavement leave due to the death of an immediate family member, employees receive up to 5 paid days.",
+      "sub_questions": [
+        "Paid parental leave duration (16 weeks)",
+        "Paid bereavement leave for immediate family (up to 5 days)"
+      ],
+      "target_tone": "Supportive, clear, and respectful.",
+      "relevant_sections": [
+        "4.5 Parental and Family Leave",
+        "4.6 Bereavement Leave"
+      ]
+    },
+    {
+      "id": "APP05",
+      "question": "What health insurance coverage does Nexora offer, what percentage of premiums is covered, and is there a wellness stipend?",
+      "expected_output": "Nexora offers medical, dental, and vision insurance, covering 80% of employee premiums and 60% of dependent premiums. Additionally, Nexora provides an annual wellness stipend of $500 for gym memberships, fitness equipment, or wellness apps.",
+      "sub_questions": [
+        "Types of insurance offered (medical, dental, vision)",
+        "Premium coverage percentages (80% employee, 60% dependent)",
+        "Annual wellness stipend amount ($500) and allowed uses"
+      ],
+      "target_tone": "Informative, welcoming, and clear.",
+      "relevant_sections": [
+        "5.4 Health and Welfare Benefits"
+      ]
+    },
+    {
+      "id": "APP06",
+      "question": "What are the password security rules, and what is required for accessing company systems under the BYOD policy?",
+      "expected_output": "Passwords must be at least 12 characters long with a mix of letters, numbers, and symbols, and Multi-Factor Authentication (MFA) is required for all systems. Under the BYOD policy, personal devices must be enrolled in the Company's mobile device management (MDM) platform with passcode protection and remote wipe capability.",
+      "sub_questions": [
+        "Password length and complexity rules (12+ chars, mixed types, MFA)",
+        "BYOD enrollment requirement (MDM platform, passcode, remote wipe)"
+      ],
+      "target_tone": "Direct, clear, security-conscious, and professional.",
+      "relevant_sections": [
+        "7.2 Password and Account Security",
+        "7.4 Bring Your Own Device (BYOD)"
+      ]
+    },
+    {
+      "id": "APP07",
+      "question": "What happens if an employee's performance falls below expectations, what is a PIP, and what are the steps of progressive discipline?",
+      "expected_output": "Employees whose performance falls below expectations may be placed on a Performance Improvement Plan (PIP) with measurable goals over 30–90 days. Nexora follows a 4-step progressive discipline process: 1) Verbal warning and coaching, 2) Written warning, 3) Final written warning/suspension, and 4) Termination of employment.",
+      "sub_questions": [
+        "PIP duration and purpose (30-90 days, measurable goals)",
+        "4-step progressive discipline sequence (verbal warning, written warning, final warning/suspension, termination)"
+      ],
+      "target_tone": "Empathetic, structured, direct, and serious.",
+      "relevant_sections": [
+        "8.1 Performance Management and PIPs",
+        "8.2 Progressive Discipline"
+      ]
+    },
+    {
+      "id": "APP08",
+      "question": "What are the airfare booking guidelines for flights under versus over 6 hours, per diem meal allowances, and the expense reimbursement window?",
+      "expected_output": "Airfare must be booked in economy class for flights under 6 hours and premium economy for longer flights. Employees receive a daily meal allowance of $75 USD domestically and $100 USD internationally. Reimbursements must be submitted within 30 days of the expense being incurred.",
+      "sub_questions": [
+        "Airfare booking class rules (<6 hrs economy, >6 hrs premium economy)",
+        "Per diem meal allowance amounts ($75 domestic, $100 international)",
+        "Expense reimbursement submission window (within 30 days)"
+      ],
+      "target_tone": "Clear, practical, and informative.",
+      "relevant_sections": [
+        "5.5 Expense Reimbursement",
+        "9.1 Booking and Approval",
+        "9.2 Per Diem and Meal Allowances"
+      ]
+    }
+  ]
+}

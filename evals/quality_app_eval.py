@@ -1,72 +1,32 @@
 """
-evals/geval_app_eval.py — Application-Level G-Eval Suite (Correctness, Completeness, Style & Tone)
+evals/quality_app_eval.py — Application-Level Quality & UX Suite (Correctness, Completeness, Style & Tone)
 
 Uses DeepEval's GEval custom metric with step-by-step Chain-of-Thought rubrics
 and log-probability scoring to evaluate factual Correctness, answer Completeness, and Brand Style & Tone.
 
 Run from project root:
-    python evals/geval_app_eval.py
+    python evals/quality_app_eval.py
 """
 
 import json
-import os
 from pathlib import Path
 import sys
-from dotenv import load_dotenv
 
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase, SingleTurnParams
 from deepeval.metrics import GEval
 from deepeval.metrics.g_eval import Rubric
-from deepeval.models.base_model import DeepEvalBaseLLM
-from langchain_deepseek import ChatDeepSeek
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.generator import generate_answer
-
-load_dotenv()
-
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-DEEPSEEK_EVAL_MODEL = os.getenv("DEEPSEEK_EVAL_MODEL", "deepseek-chat")
-
-if not DEEPSEEK_API_KEY:
-    raise RuntimeError("DEEPSEEK_API_KEY is not set in the .env file.")
+from evals.judge import judge
 
 # PATHS & CONFIGURATION
-GOLDEN_DATASET = PROJECT_ROOT / "goldens" / "application_golden_dataset.json"
+GOLDEN_DATASET = PROJECT_ROOT / "goldens" / "quality_golden_dataset.json"
 TOP_K = 3
-
-
-# DEEPSEEK JUDGE MODEL
-class DeepSeekJudge(DeepEvalBaseLLM):
-
-    def __init__(self, model_name: str):
-        self.model_name = model_name
-        self.model = ChatDeepSeek(
-            model=model_name,
-            api_key=DEEPSEEK_API_KEY,
-            temperature=0,
-        )
-
-    def load_model(self):
-        return self.model
-
-    def generate(self, prompt: str) -> str:
-        response = self.model.invoke(prompt)
-        return response.content
-
-    async def a_generate(self, prompt: str) -> str:
-        response = await self.model.ainvoke(prompt)
-        return response.content
-
-    def get_model_name(self):
-        return self.model_name
-
-
-judge = DeepSeekJudge(DEEPSEEK_EVAL_MODEL)
 
 # 1. G-EVAL CORRECTNESS RUBRIC & METRIC DEFINITION
 correctness_rubric = [
@@ -205,7 +165,7 @@ with open(GOLDEN_DATASET, "r", encoding="utf-8") as f:
 
 test_cases = []
 
-print(f"Running Application-Level G-Eval Suite for {len(dataset['questions'])} questions...\n")
+print(f"Running Application-Level Quality & UX Suite for {len(dataset['questions'])} questions...\n")
 
 for item in dataset["questions"]:
     question = item["question"]
@@ -216,7 +176,7 @@ for item in dataset["questions"]:
     actual_output = rag_result["answer"]
     retrieval_context = rag_result["retrieval_context"]
 
-    # Build LLMTestCase for G-Eval Evaluation
+    # Build LLMTestCase for Quality Evaluation
     test_case = LLMTestCase(
         input=question,
         actual_output=actual_output,
@@ -227,7 +187,7 @@ for item in dataset["questions"]:
     test_cases.append(test_case)
 
 if __name__ == "__main__":
-    print("Evaluating Full Application-Level G-Eval Suite: Correctness, Completeness, Style & Tone...\n")
+    print("Evaluating Application-Level Quality & UX Suite: Correctness, Completeness, Style & Tone...\n")
     evaluate(
         test_cases=test_cases,
         metrics=[

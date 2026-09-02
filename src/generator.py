@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Iterator
 from dotenv import load_dotenv
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -79,6 +79,39 @@ def generate_from_context(question: str, context_texts: List[str]) -> str:
     return response.content
 
 
+def generate_from_context_with_metadata(question: str, context_texts: List[str]) -> Dict[str, Any]:
+    """
+    Isolated Generator step with official token usage metadata:
+    Returns answer string and exact input/output token counts directly from LLM response metadata.
+    """
+    formatted_context = "\n\n---\n\n".join(context_texts)
+    chain = PROMPT | get_llm()
+
+    response = chain.invoke({
+        "context": formatted_context,
+        "question": question
+    })
+
+    usage = getattr(response, "usage_metadata", {}) or {}
+    if not usage and hasattr(response, "response_metadata"):
+        token_usage = response.response_metadata.get("token_usage", {})
+        input_tokens = token_usage.get("prompt_tokens", 0)
+        output_tokens = token_usage.get("completion_tokens", 0)
+        total_tokens = token_usage.get("total_tokens", 0)
+    else:
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        total_tokens = usage.get("total_tokens", 0)
+
+    return {
+        "answer": response.content,
+        "usage_metadata": usage,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "total_tokens": total_tokens,
+    }
+
+
 def generate_answer(question: str, k: int = 4) -> Dict[str, Any]:
     """
     RAG Pipeline generation step:
@@ -104,6 +137,28 @@ def generate_answer(question: str, k: int = 4) -> Dict[str, Any]:
         "retrieved_docs": retrieved_docs,
         "retrieval_context": context_texts
     }
+
+
+def generate_stream_from_context(question: str, context_texts: List[str]) -> Iterator[str]:
+    """
+    Isolated Generator streaming step:
+    Accepts explicit context strings and streams response chunks token-by-token directly from LLM.
+    Used for measuring TTFT (Time To First Token) of the generator component in isolation.
+    
+    Yields:
+        str: Individual token chunks as they arrive from the LLM.
+    """
+    formatted_context = "\n\n---\n\n".join(context_texts)
+    chain = PROMPT | get_llm()
+
+    for chunk in chain.stream({
+        "context": formatted_context,
+        "question": question
+    }):
+        if hasattr(chunk, "content"):
+            yield chunk.content
+        else:
+            yield str(chunk)
 
 
 if __name__ == "__main__":
